@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3F078CB81E683B9500EA67A1 /* exceptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F078CB71E683B9500EA67A1 /* exceptions.swift */; };
 		3F260DFE1E65C64900582DF6 /* calculater_logic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F260DFD1E65C64900582DF6 /* calculater_logic.swift */; };
 		3F260E001E65D04200582DF6 /* operation_type.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F260DFF1E65D04200582DF6 /* operation_type.swift */; };
 		E01FFAA41E5C57A000BC48BB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E01FFAA21E5C57A000BC48BB /* AppDelegate.swift */; };
@@ -14,6 +15,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3F078CB71E683B9500EA67A1 /* exceptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = exceptions.swift; sourceTree = "<group>"; };
 		3F260DFD1E65C64900582DF6 /* calculater_logic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = calculater_logic.swift; sourceTree = "<group>"; };
 		3F260DFF1E65D04200582DF6 /* operation_type.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = operation_type.swift; sourceTree = "<group>"; };
 		E01FFA871E5C504100BC48BB /* calculator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = calculator.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -57,6 +59,7 @@
 				E01FFA961E5C504100BC48BB /* Info.plist */,
 				3F260DFD1E65C64900582DF6 /* calculater_logic.swift */,
 				3F260DFF1E65D04200582DF6 /* operation_type.swift */,
+				3F078CB71E683B9500EA67A1 /* exceptions.swift */,
 			);
 			path = calculator;
 			sourceTree = "<group>";
@@ -133,6 +136,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E01FFAA41E5C57A000BC48BB /* AppDelegate.swift in Sources */,
+				3F078CB81E683B9500EA67A1 /* exceptions.swift in Sources */,
 				3F260E001E65D04200582DF6 /* operation_type.swift in Sources */,
 				3F260DFE1E65C64900582DF6 /* calculater_logic.swift in Sources */,
 				E01FFAA51E5C57A000BC48BB /* CalculatorController.swift in Sources */,

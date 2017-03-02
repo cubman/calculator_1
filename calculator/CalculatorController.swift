@@ -13,8 +13,7 @@ class CalculatorController: UIViewController {
     let buttonText = [["7", "8", "9", ":"],
                       ["4", "5", "6", "*"],
                       ["1", "2", "3", "-"],
-                      ["C", "0", ".", "+"],
-                      ["" , "" , "" , "="]]
+                      [".", "0", "=", "+"]]
     var inputLabel: UILabel!
     let emptyText = ""
     
@@ -23,6 +22,7 @@ class CalculatorController: UIViewController {
     var hasDecimalPoint = false
     var calc : Calculator = Calculator()
     var opType : OperationType? = nil
+    var madeOperations: (Bool, Bool) = (false, false)
     
     let formatter = NumberFormatter()
     
@@ -60,9 +60,7 @@ class CalculatorController: UIViewController {
                 view.addSubview(button)
             }
         }
-        calc = calc + 4.0
-        calc += 3.4
-        print(calc.result)
+
     }
     
     func createGridButton(row: Int, col: Int, of size: CGSize) -> UIButton {
@@ -76,8 +74,45 @@ class CalculatorController: UIViewController {
         } else {
             button.setTitle(buttonText[row][col], for: .normal)
         }
-        button.titleLabel?.font = inputLabel.font.withSize(28)
+        button.titleLabel?.font = inputLabel.font.withSize(32)
         return button
+    }
+    
+    func makeCalculation(_ op : OperationType) {
+        do {
+        switch op {
+            case .plus:
+                try calc += inputValue
+            case .minus:
+                calc -= inputValue
+            case .mod:
+                calc *= inputValue
+            case .div:
+                try calc /= inputValue
+            }
+        } catch MyErrors.divideByZero(let errorMessage) {
+            let alert = UIAlertController(title: "Error", message: errorMessage, preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: "Click", style: UIAlertActionStyle.default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+        }
+        catch MyErrors.tooLongNumb(let errorMessage) {
+            let alert = UIAlertController(title: "Error", message: errorMessage, preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: "Click", style: UIAlertActionStyle.default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+    }
+    catch {
+            let alert = UIAlertController(title: "SomeThing Strange", message: ":)", preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: "Click", style: UIAlertActionStyle.default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+        }
+            inputLabel.text = String(calc.result)
+        
+
+    }
+    
+    func printNumber(fracCnt fc: Int, _ d: Double) {
+        formatter.minimumFractionDigits = fc
+        inputLabel.text = formatter.string(from: NSNumber(value: d))
     }
     
     func buttonTouched(sender: UIButton)  {
@@ -87,52 +122,95 @@ class CalculatorController: UIViewController {
         }
         switch content {
         case "0"..."9":
+            if !madeOperations.0
+            {
+                madeOperations.0 = true
+            }
+            
+            if madeOperations.0 && opType != nil {
+                calc.wasActivated = true
+            }
+            
+            if madeOperations.0 && madeOperations.1 {
+                calc.wasActivated = false
+            }
+            
             if hasDecimalPoint {
                 precision *= 10
                 inputValue += Double(content)! / precision;
             } else {
                 inputValue = inputValue * 10 + Double(content)!
             }
-            if precision <= 1 {
-                formatter.minimumFractionDigits = Int(precision)
-            } else {
-                formatter.minimumFractionDigits = min(Int(log(precision)/log(10)), 5)
-            }
-            inputLabel.text = formatter.string(from: NSNumber(value: inputValue))
+
+            printNumber(fracCnt: precision <= 1 ? Int(precision) : min(Int(log(precision)/log(10)), 5),inputValue)
+            
         case formatter.decimalSeparator:
+            if hasDecimalPoint && !madeOperations.0 {
+                return
+            }
             hasDecimalPoint = true
             precision = 1
+
             // show point
+            print(".")
+            
             if inputLabel.text!.isEmpty {
                 inputLabel.text = "0" + formatter.decimalSeparator
             } else {
                 inputLabel.text = inputLabel.text! + formatter.decimalSeparator
             }
-        case "C":
-            inputValue = 0
-            inputLabel.text = emptyText
+            
+        case "-", "+", "*", ":":
+            switch content {
+            case "-":
+                opType = .minus
+            case "+":
+                opType = .plus
+            case "*":
+                opType = .mod
+            case ":":
+                opType = .div
+            default:
+                return
+            }
+            
+            madeOperations.1 = false
             hasDecimalPoint = false
+            
+            if !madeOperations.0 {
+                return
+            }
+            
+            if !calc.wasActivated {
+                calc.result = inputValue
+                print("++", calc.result)
+            } else {
+                    makeCalculation(opType!)
+            }
+            
+            inputLabel.text = emptyText
+            inputValue = 0
             precision = 0
             
-        case "+":
-            calc.result = inputValue
-            inputValue = 0
-            opType = .plus
-            inputLabel.text = emptyText
-            
         case "=" :
+            
+            if madeOperations.0 {
             if let op = opType {
-            switch op {
-            case .plus:
-                calc += inputValue
-            default:
-                calc -= 3
+                makeCalculation(op)
             }
-                inputLabel.text = String(calc.result)
             }
-            else {
-                print("error _-")
-            }
+
+            let str = String(calc.result)
+            let point = str.rangeOfCharacter(from: ["."])?.lowerBound
+            printNumber(fracCnt:  min(str.distance(from: point!, to: str.endIndex) - 1, 5) , calc.result)
+            madeOperations.0 = false
+            madeOperations.1 = true
+            calc.wasActivated = true
+            hasDecimalPoint = false
+            opType = nil
+            inputValue = 0
+            precision = 0
+            
         default:
             print("Unknown button")
         }
