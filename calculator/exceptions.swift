@@ -11,4 +11,5 @@ import Foundation
 enum MyErrors : Error {
     case divideByZero(String)
     case tooLongNumb(String)
+    case negativeNumber(String)
 }

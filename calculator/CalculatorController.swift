@@ -10,7 +10,7 @@ import UIKit
 
 class CalculatorController: UIViewController {
 
-    let buttonText = [[" ", "±", "√", " "],
+    let buttonText = [["±", "√", "cos", "sin"],
                       ["7", "8", "9", ":"],
                       ["4", "5", "6", "*"],
                       ["1", "2", "3", "-"],
@@ -23,7 +23,7 @@ class CalculatorController: UIViewController {
     var hasDecimalPoint = false
     var calc : Calculator = Calculator()
     var opType : OperationType? = nil
-    var madeOperations: (Bool, Bool) = (false, false)
+    var madeOperations: (Bool, Bool) = (false, false)// entered | pressed = | unary
     
     let formatter = NumberFormatter()
     
@@ -94,6 +94,14 @@ class CalculatorController: UIViewController {
                 calc *= inputValue
             case .div:
                 try calc /= inputValue
+            case .sqrt :
+                try √calc
+            case .plusMinus:
+                ±calc
+            case .sin:
+                sin(calc)
+            case .cos:
+                cos(calc)
             }
         } catch MyErrors.divideByZero(let errorMessage) {
             let alert = UIAlertController(title: "Error", message: errorMessage, preferredStyle: UIAlertControllerStyle.alert)
@@ -104,7 +112,12 @@ class CalculatorController: UIViewController {
             let alert = UIAlertController(title: "Error", message: errorMessage, preferredStyle: UIAlertControllerStyle.alert)
             alert.addAction(UIAlertAction(title: "Click", style: UIAlertActionStyle.default, handler: nil))
             self.present(alert, animated: true, completion: nil)
-    }
+        }
+        catch MyErrors.negativeNumber(let errorMessage) {
+            let alert = UIAlertController(title: "Error", message: errorMessage, preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: "Click", style: UIAlertActionStyle.default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+        }
     catch {
             let alert = UIAlertController(title: "SomeThing Strange", message: ":)", preferredStyle: UIAlertControllerStyle.alert)
             alert.addAction(UIAlertAction(title: "Click", style: UIAlertActionStyle.default, handler: nil))
@@ -118,6 +131,12 @@ class CalculatorController: UIViewController {
     func printNumber(fracCnt fc: Int, _ d: Double) {
         formatter.minimumFractionDigits = fc
         inputLabel.text = formatter.string(from: NSNumber(value: d))
+    }
+    
+    func printCalculatorResult() {
+        let str = String(calc.result)
+        let point = str.rangeOfCharacter(from: ["."])?.lowerBound
+        printNumber(fracCnt: calc.result.truncatingRemainder(dividingBy: 1.0) < 0.00001 ? 0 : min(str.distance(from: point!, to: str.endIndex) - 1, 5) , calc.result)
     }
     
     func buttonTouched(sender: UIButton)  {
@@ -150,7 +169,7 @@ class CalculatorController: UIViewController {
             printNumber(fracCnt: precision <= 1 ? Int(precision) : min(Int(log(precision)/log(10)), 5),inputValue)
             
         case formatter.decimalSeparator:
-            if hasDecimalPoint && !madeOperations.0 {
+            if hasDecimalPoint || !madeOperations.0 {
                 return
             }
             hasDecimalPoint = true
@@ -197,8 +216,40 @@ class CalculatorController: UIViewController {
             inputValue = 0
             precision = 0
             
-        case "√" :
-            return
+        case "√", "±", "sin", "cos" :
+            if (!madeOperations.0 && !madeOperations.1) || opType != nil
+            {
+                return
+            }
+            
+            if !madeOperations.1 && !calc.wasActivated
+            {
+                calc.result = inputValue
+            }
+
+            switch content {
+            case "√":
+                opType = .sqrt
+            case "±":
+                opType = .plusMinus
+            case "sin":
+                opType = .sin
+            case "cos":
+                opType = .cos
+                
+            default:
+                return
+            }
+            
+            calc.wasActivated = false
+            madeOperations.1 = true
+            makeCalculation(opType!)
+            printCalculatorResult()
+            opType = nil
+            
+            inputValue = 0
+            precision = 0
+
         case "=" :
             
             if madeOperations.0 {
@@ -207,11 +258,10 @@ class CalculatorController: UIViewController {
             }
             }
 
-            let str = String(calc.result)
-            let point = str.rangeOfCharacter(from: ["."])?.lowerBound
-            printNumber(fracCnt: calc.result.truncatingRemainder(dividingBy: 1.0) < 0.00001 ? 0 : min(str.distance(from: point!, to: str.endIndex) - 1, 5) , calc.result)
+            printCalculatorResult()
             madeOperations.0 = false
             madeOperations.1 = true
+
             calc.wasActivated = true
             hasDecimalPoint = false
             opType = nil

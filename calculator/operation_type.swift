@@ -13,4 +13,8 @@ enum OperationType {
     case mod
     case plus
     case minus
+    case sqrt
+    case plusMinus
+    case sin
+    case cos
 }

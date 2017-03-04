@@ -7,6 +7,17 @@
 //
 
 import Foundation
+import Swift
+prefix operator √ {
+associativity right
+precedence 155
+}
+
+prefix operator ± {
+associativity right
+precedence 156
+}
+
 let maxLength = 100000.0
 
 class Calculator {
@@ -66,6 +77,27 @@ class Calculator {
         } catch {
             throw MyErrors.tooLongNumb("слишком большое число")
         }
-        
     }
+
+    
+    static prefix func√(_ cal: Calculator) throws {
+        guard cal.result >= 0 else
+        {
+            throw MyErrors.negativeNumber("число должно быть положительным")
+        }
+        cal.result = sqrt(cal.result)
+    }
+    
+    static prefix func±(_ cal: Calculator) {
+        cal.result = -1 * cal.result
+    }
+
+}
+
+func sin(_ cal: Calculator) {
+    cal.result = sin(cal.result)
+}
+
+func cos(_ cal: Calculator) {
+    cal.result = cos(cal.result)
 }
