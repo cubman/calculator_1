@@ -10,7 +10,8 @@ import UIKit
 
 class CalculatorController: UIViewController {
 
-    let buttonText = [["7", "8", "9", ":"],
+    let buttonText = [[" ", "±", "√", " "],
+                      ["7", "8", "9", ":"],
                       ["4", "5", "6", "*"],
                       ["1", "2", "3", "-"],
                       [".", "0", "=", "+"]]
@@ -48,6 +49,7 @@ class CalculatorController: UIViewController {
         // LABEL
         inputLabel = UILabel(frame: CGRect(origin: view.bounds.origin,
                                       size: CGSize(width: view.bounds.width, height: buttonSize.height)))
+        //inputLabel.backgroundColor = #colorLiteral(red: 0.721568644, green: 0.8862745166, blue: 0.5921568871, alpha: 1)
         inputLabel.text = emptyText
         inputLabel.textAlignment = .right
         inputLabel.font = UIFont(name: "Menlo-Regular", size: 28)
@@ -56,6 +58,7 @@ class CalculatorController: UIViewController {
         for i in 0..<buttonText.count {
             for j in 0..<buttonText[i].count {
                 let button = createGridButton(row: i, col: j, of: buttonSize)
+                button.backgroundColor = #colorLiteral(red: 0.2086084485, green: 0.498249352, blue: 0.7920735478, alpha: 0.6744883363)
                 button.addTarget(self, action: #selector(buttonTouched(sender:)), for: .touchUpInside)
                 view.addSubview(button)
             }
@@ -74,6 +77,8 @@ class CalculatorController: UIViewController {
         } else {
             button.setTitle(buttonText[row][col], for: .normal)
         }
+        button.setTitleColor(#colorLiteral(red: 1, green: 1, blue: 1, alpha: 1), for: .normal)
+        
         button.titleLabel?.font = inputLabel.font.withSize(32)
         return button
     }
@@ -192,6 +197,8 @@ class CalculatorController: UIViewController {
             inputValue = 0
             precision = 0
             
+        case "√" :
+            return
         case "=" :
             
             if madeOperations.0 {
@@ -202,7 +209,7 @@ class CalculatorController: UIViewController {
 
             let str = String(calc.result)
             let point = str.rangeOfCharacter(from: ["."])?.lowerBound
-            printNumber(fracCnt:  min(str.distance(from: point!, to: str.endIndex) - 1, 5) , calc.result)
+            printNumber(fracCnt: calc.result.truncatingRemainder(dividingBy: 1.0) < 0.00001 ? 0 : min(str.distance(from: point!, to: str.endIndex) - 1, 5) , calc.result)
             madeOperations.0 = false
             madeOperations.1 = true
             calc.wasActivated = true
