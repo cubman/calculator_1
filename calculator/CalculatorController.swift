@@ -184,7 +184,7 @@ class CalculatorController: UIViewController {
                 inputLabel.text = inputLabel.text! + formatter.decimalSeparator
             }
             
-        case "-", "+", "*", ":":
+        case "-", "+", "*", "÷":
             switch content {
             case "-":
                 opType = .minus
