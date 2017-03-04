@@ -1,7 +1,7 @@
 //
 //  CalculatorController.swift
 //  calculator
-//
+///Users/rupertwaldron/Documents/calculator_1/calculator
 //  Created by Илья Лошкарёв on 18.02.17.
 //  Copyright © 2017 Илья Лошкарёв. All rights reserved.
 //
@@ -11,7 +11,7 @@ import UIKit
 class CalculatorController: UIViewController {
 
     let buttonText = [["±", "√", "cos", "sin"],
-                      ["7", "8", "9", ":"],
+                      ["7", "8", "9", "÷"],
                       ["4", "5", "6", "*"],
                       ["1", "2", "3", "-"],
                       [".", "0", "=", "+"]]
@@ -184,7 +184,7 @@ class CalculatorController: UIViewController {
                 inputLabel.text = inputLabel.text! + formatter.decimalSeparator
             }
             
-        case "-", "+", "*", ":":
+        case "-", "+", "*", "÷":
             switch content {
             case "-":
                 opType = .minus
@@ -192,7 +192,7 @@ class CalculatorController: UIViewController {
                 opType = .plus
             case "*":
                 opType = .mod
-            case ":":
+            case "÷":
                 opType = .div
             default:
                 return
